@@ -2,7 +2,6 @@ const userModel = require("../modal/User");
 
 const userDetailController=async(req,res)=>{
     try {
-        console.log("userId",req.userId)
         const user = await userModel.findById(req.userId)
 
         res.status(200).json({

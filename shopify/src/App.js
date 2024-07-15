@@ -6,23 +6,29 @@ import { useEffect } from "react";
 import apiUrl from "./api/Api";
 import Context from "./context";
 import { setUserDetails } from "./redux/userSlice";
-const { useDispatch } = require("react-redux");
+import { useDispatch } from "react-redux";
 
 function App() {
   const dispatch = useDispatch();
   const fetchUserDetails = async () => {
-    const dataResponse = await fetch(apiUrl.current_user.url, {
-      method: apiUrl.current_user.method,
-      credentials: "include",
-    });
-
-    const dataApi = await dataResponse.json();
-
-    if (dataApi.success) {
-      dispatch(setUserDetails(dataApi.data));
-    }
-
+    try {
+      const dataResponse = await fetch(apiUrl.current_user.url, {
+        method: apiUrl.current_user.method,
+        credentials: "include",
+      });
+  
+      const dataApi = await dataResponse.json();
+  
+      if (dataApi.success) {
+        dispatch(setUserDetails(dataApi.data));
+      }
     console.log("dataResponse", dataResponse);
+
+    } catch (error) {
+      console.error("error", error);
+    }
+   
+
   };
 
   useEffect(() => {

@@ -1,11 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "../assest/logo.png";
 import { IoIosSearch } from "react-icons/io";
 import { FaUserCircle } from "react-icons/fa";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import apiUrl from "../api/Api";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { setUserDetails } from "../redux/userSlice";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [menuDisplay, setMenuDisplay] = useState(false);
+
+  const user = useSelector((state) => state?.user?.user);
+  console.log("user header: ", user);
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch(apiUrl.logout.url, {
+        method: apiUrl.logout.method,
+        credentials: "include",
+        headers: {
+          "content-type": "application/json",
+        },
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        toast.success(data.message);
+        dispatch(setUserDetails(null));
+        navigate("/login");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <header className="h-17 shadow-md bg-white">
       <div className="h-full container mx-auto flex items-center px-4 justify-between">
@@ -25,8 +59,36 @@ const Navbar = () => {
           </div>
         </div>
         <div className="flex items-center gap-7">
-          <div className="text-3xl cursor-pointer">
-            <FaUserCircle />
+          <div className="relative group">
+            <div
+              className="cursor-pointer text-3xl relative flex justify-center"
+              onClick={() => {
+                setMenuDisplay((prev) => !prev);
+              }}
+            >
+              {user?.profilePhoto ? (
+                <img
+                  src={user?.profilePhoto}
+                  alt="profile"
+                  className="h-10 w-10 rounded-full"
+                />
+              ) : (
+                <FaUserCircle />
+              )}
+            </div>
+
+            {menuDisplay && (
+              <div className="absolute  bg-white bottom-0 top-11 h-fit p-2 shadow-lg rounded">
+                <nav>
+                  <Link
+                    to={"adminPanel"}
+                    className="block py-2 px-4 hover:bg-slate-200 whitespace-nowrap hidden md:block hover:bg-slate-100 p-2"
+                  >
+                    Admin Panel
+                  </Link>
+                </nav>
+              </div>
+            )}
           </div>
           <div className="text-3xl cursor-pointer relative">
             <span>
@@ -37,9 +99,21 @@ const Navbar = () => {
             </div>
           </div>
           <div>
-            <Link to={"/login"} className="bg-blue-600 text-white px-3 py-2 rounded-full hover:bg-slate-800">
-              Login
-            </Link>
+            {user?._id ? (
+              <button
+                onClick={handleLogout}
+                className="bg-blue-600 text-white px-3 py-2 rounded-full hover:bg-slate-800"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to={"/login"}
+                className="bg-blue-600 text-white px-3 py-2 rounded-full hover:bg-slate-800"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </div>

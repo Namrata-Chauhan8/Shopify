@@ -7,7 +7,7 @@ const AuthToken = async (req, res, next) => {
 
     if (!token) {
       return res.json({
-        message: "Unauthorized user",
+        message: "Token is missing",
         error: true,
         success: false,
       });
@@ -15,9 +15,12 @@ const AuthToken = async (req, res, next) => {
 
     jwt.verify(token, process.env.TOKEN_SECRET_KEY, (err, decoded) => {
       if (err) {
-        console.log("Error AuthToken: ", err);
+        return res.status(401).json({
+          message: "Please login first",
+          error: true,
+          success: false,
+        });
       }
-
       req.userId = decoded?._id;
       next();
     });
