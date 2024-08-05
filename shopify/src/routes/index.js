@@ -9,42 +9,55 @@ import AllUsers from "../pages/admin/AllUsers";
 import AllProducts from "../pages/admin/AllProducts";
 
 const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <App />,
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "",
+        element: <Home />,
+      },
+
+      {
+        path: "forgot-password",
+        element: <div>Forgot Password</div>,
+      },
+      {
+        path: "adminPanel",
+        element: (
+          <div>
+            <AdminPanel />
+          </div>
+        ),
         children: [
-            {
-                path: "",
-                element: <Home />,
-            },
-            {
-                path: "/login",
-                element: <Login />,
-            },
-            {
-                path: "/signup",
-                element: <Signup />,
-            },
-            {
-                path: "forgot-password",
-                element: <div>Forgot Password</div>,
-            },
-            {
-                path: "adminPanel",
-                element: <div><AdminPanel /></div>,
-                children:[
-                    {
-                        path: "allUsers",
-                        element: <div><AllUsers /></div>
-                    },
-                    {
-                        path: "uploadProducts",
-                        element: <div><AllProducts /></div>
-                    }
-                ]
-            }
+          {
+            path: "allUsers",
+            element: (
+              <div>
+                <AllUsers />
+              </div>
+            ),
+          },
+          {
+            path: "uploadProducts",
+            element: (
+              <div>
+                <AllProducts />
+              </div>
+            ),
+          },
         ],
-    },
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/signup",
+    element: <Signup />,
+  },
 ]);
 
-export default router
+export default router;

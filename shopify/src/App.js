@@ -16,19 +16,15 @@ function App() {
         method: apiUrl.current_user.method,
         credentials: "include",
       });
-  
+
       const dataApi = await dataResponse.json();
-  
+
       if (dataApi.success) {
         dispatch(setUserDetails(dataApi.data));
       }
-    console.log("dataResponse", dataResponse);
-
     } catch (error) {
       console.error("error", error);
     }
-   
-
   };
 
   useEffect(() => {
@@ -37,16 +33,18 @@ function App() {
 
   return (
     <>
-    <Context.Provider value={{
-      fetchUserDetails //user details fetch
-    }}>
-      <Toaster />
-      <Navbar />
-      <main className="">
-        <Outlet />
-      </main>
-      <Footer />
-    </Context.Provider>
+      <Context.Provider
+        value={{
+          fetchUserDetails, //user details fetch
+        }}
+      >
+        <Toaster />
+        <Navbar />
+        <main className="">
+          <Outlet />
+        </main>
+        <Footer />
+      </Context.Provider>
     </>
   );
 }

@@ -9,6 +9,8 @@ import apiUrl from "../api/Api";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { setUserDetails } from "../redux/userSlice";
+import Role from "../common/Role";
+import ROLE from "../common/Role";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -17,7 +19,6 @@ const Navbar = () => {
   const [menuDisplay, setMenuDisplay] = useState(false);
 
   const user = useSelector((state) => state?.user?.user);
-  console.log("user header: ", user);
 
   const handleLogout = async () => {
     try {
@@ -80,12 +81,17 @@ const Navbar = () => {
             {menuDisplay && (
               <div className="absolute  bg-white bottom-0 top-11 h-fit p-2 shadow-lg rounded">
                 <nav>
-                  <Link
-                    to={"adminPanel"}
-                    className="block py-2 px-4 hover:bg-slate-200 whitespace-nowrap hidden md:block hover:bg-slate-100 p-2"
-                  >
-                    Admin Panel
-                  </Link>
+                  {user?.role === ROLE.ADMIN && (
+                    <Link
+                      to={"adminPanel"}
+                      className="block py-2 px-4 hover:bg-slate-200 whitespace-nowrap hidden md:block hover:bg-slate-100 p-2"
+                      onClick={() => {
+                        setMenuDisplay((prev) => !prev);
+                      }}
+                    >
+                      Admin Panel
+                    </Link>
+                  )}
                 </nav>
               </div>
             )}

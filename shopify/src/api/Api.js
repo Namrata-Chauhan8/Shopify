@@ -17,5 +17,13 @@ const apiUrl = {
     url: `${backendDomain}/api/logout`,
     method: "get",
   },
+  allUsers : {
+    url: `${backendDomain}/api/allUsers`,
+    method: "get",
+  },
+  updateUser: {
+    url: `${backendDomain}/api/update-user`,
+    method: "post",
+  }
 };
 export default apiUrl
