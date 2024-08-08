@@ -61,29 +61,31 @@ const Navbar = () => {
         </div>
         <div className="flex items-center gap-7">
           <div className="relative group">
-            <div
-              className="cursor-pointer text-3xl relative flex justify-center"
-              onClick={() => {
-                setMenuDisplay((prev) => !prev);
-              }}
-            >
-              {user?.profilePhoto ? (
-                <img
-                  src={user?.profilePhoto}
-                  alt="profile"
-                  className="h-10 w-10 rounded-full"
-                />
-              ) : (
-                <FaUserCircle />
-              )}
-            </div>
+            {user?._id && (
+              <div
+                className="cursor-pointer text-3xl relative flex justify-center"
+                onClick={() => {
+                  setMenuDisplay((prev) => !prev);
+                }}
+              >
+                {user?.profilePhoto ? (
+                  <img
+                    src={user?.profilePhoto}
+                    alt="profile"
+                    className="h-10 w-10 rounded-full"
+                  />
+                ) : (
+                  <FaUserCircle />
+                )}
+              </div>
+            )}
 
             {menuDisplay && (
               <div className="absolute  bg-white bottom-0 top-11 h-fit p-2 shadow-lg rounded">
                 <nav>
                   {user?.role === ROLE.ADMIN && (
                     <Link
-                      to={"adminPanel"}
+                      to={"/adminPanel/uploadProducts"}
                       className="block py-2 px-4 hover:bg-slate-200 whitespace-nowrap hidden md:block hover:bg-slate-100 p-2"
                       onClick={() => {
                         setMenuDisplay((prev) => !prev);
