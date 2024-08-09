@@ -1,4 +1,4 @@
-const userModel = require("../modal/User");
+const userModel = require("../../modal/User");
 
 const userDetailController=async(req,res)=>{
     try {

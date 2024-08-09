@@ -1,4 +1,4 @@
-const userModal = require("../modal/User");
+const userModal = require("../../modal/User");
 
 async function allUsers(req,res){
     try {

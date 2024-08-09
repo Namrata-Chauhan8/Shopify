@@ -1,4 +1,4 @@
-const userModal = require("../modal/User");
+const userModal = require("../../modal/User");
 
 async function updateUser(req, res) {
   try {

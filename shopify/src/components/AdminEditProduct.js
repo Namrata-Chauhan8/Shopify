@@ -1,21 +1,28 @@
-import React, { useState } from "react";
-import { IoIosClose } from "react-icons/io";
-import { useForm } from "react-hook-form";
-import productCategory from "../helpers/productCategory";
+import React, { useEffect, useState } from "react";
 import { FaCloudArrowUp } from "react-icons/fa6";
-import uploadImage from "../helpers/uploadImages";
-import DisplayImage from "./DisplayImage";
+import { IoIosClose } from "react-icons/io";
+import productCategory from "../helpers/productCategory";
+import { useForm } from "react-hook-form";
 import apiUrl from "../api/Api";
 import toast from "react-hot-toast";
+import uploadImage from "../helpers/uploadImages";
+import DisplayImage from "./DisplayImage";
 
-const UploadProducts = ({ onClose ,fetchData}) => {
+const AdminEditProduct = ({ onClose, data, fetchData }) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
-  const [productImage, setProductImage] = useState([]);
+  useEffect(() => {
+    if (data) {
+      reset(data);
+    }
+  }, [data, reset]);
+
+  const [productImage, setProductImage] = useState(data?.productImage || []);
 
   const [openFullScreenImage, setOpenFullScreenImage] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState("");
@@ -23,8 +30,8 @@ const UploadProducts = ({ onClose ,fetchData}) => {
   const onFormSubmit = async (e) => {
     e.productImage = productImage;
     try {
-      const response = await fetch(apiUrl.uploadProduct.url, {
-        method: apiUrl.uploadProduct.method,
+      const response = await fetch(apiUrl.editProduct.url, {
+        method: apiUrl.editProduct.method,
         credentials: "include",
         headers: {
           "content-type": "application/json",
@@ -35,6 +42,7 @@ const UploadProducts = ({ onClose ,fetchData}) => {
       const data = await response.json();
       if (data.success) {
         toast.success(data.message);
+        reset();
         onClose();
         fetchData();
       } else {
@@ -71,7 +79,7 @@ const UploadProducts = ({ onClose ,fetchData}) => {
               />
             </button>
           </div>
-          <h2 className="text-2xl font-bold mb-4">Upload Products</h2>
+          <h2 className="text-2xl font-bold mb-4">Edit Products</h2>
 
           <form onSubmit={handleSubmit(onFormSubmit)}>
             <div className="mb-4">
@@ -205,6 +213,7 @@ const UploadProducts = ({ onClose ,fetchData}) => {
                     <input
                       type="file"
                       id="productImageInput"
+                      name="productImage"
                       className="hidden"
                       onChange={handleUploadProductImage}
                     />
@@ -247,7 +256,7 @@ const UploadProducts = ({ onClose ,fetchData}) => {
                 className="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 mt-2"
                 disabled={productImage.length === 0}
               >
-                Upload Product
+                Update Product
               </button>
             </div>
           </form>
@@ -263,4 +272,4 @@ const UploadProducts = ({ onClose ,fetchData}) => {
   );
 };
 
-export default UploadProducts;
+export default AdminEditProduct;

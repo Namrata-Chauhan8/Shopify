@@ -1,5 +1,5 @@
- const uploadProductPermission = require("../helpers/permisson");
-const productModal = require("../modal/ProductModal");
+ const uploadProductPermission = require("../../helpers/permisson");
+const productModal = require("../../modal/ProductModal");
  async function UploadProductController(req, res) {
     try {
         const sessionUserId = req.userId;

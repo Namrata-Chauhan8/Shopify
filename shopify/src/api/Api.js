@@ -28,6 +28,14 @@ const apiUrl = {
   uploadProduct: {
     url: `${backendDomain}/api/upload-product`,
     method: "post",
+  },
+  allProducts:{
+    url: `${backendDomain}/api/get-product`,
+    method: "get",
+  },
+  editProduct:{
+    url: `${backendDomain}/api/update-product`,
+    method: "post",
   }
 };
 export default apiUrl
