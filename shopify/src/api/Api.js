@@ -36,6 +36,14 @@ const apiUrl = {
   editProduct:{
     url: `${backendDomain}/api/update-product`,
     method: "post",
-  }
+  },
+  categoryProduct:{
+    url: `${backendDomain}/api/get-categoryProduct`,
+    method: "get",
+  },
+  productsByCategory:{
+    url: `${backendDomain}/api/get-productsByCategory`,
+    method: "get",
+  },
 };
 export default apiUrl
