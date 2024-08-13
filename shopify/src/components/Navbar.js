@@ -9,7 +9,6 @@ import apiUrl from "../api/Api";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { setUserDetails } from "../redux/userSlice";
-import Role from "../common/Role";
 import ROLE from "../common/Role";
 
 const Navbar = () => {

@@ -43,7 +43,11 @@ const apiUrl = {
   },
   productsByCategory:{
     url: `${backendDomain}/api/get-productsByCategory`,
-    method: "get",
+    method: "post",
   },
+  productDetails:{
+    url: `${backendDomain}/api/get-productDetails`,
+    method: "post",
+  }
 };
 export default apiUrl

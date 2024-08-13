@@ -10,6 +10,7 @@ const getProductController = require("../controller/product/GetProduct");
 const editProductController = require("../controller/product/EditProducts");
 const getCategoryProduct = require("../controller/product/GetCategoryProduct");
 const getProductsByCategory = require("../controller/product/GetProductsByCategory");
+const getProductDetails = require("../controller/product/GetProductDetails");
 
 router.post("/signup", signup);
 router.post("/login", login);
@@ -27,6 +28,7 @@ router.post("/upload-product", AuthToken, UploadProductController);
 router.get("/get-product", getProductController);
 router.post("/update-product", AuthToken, editProductController);
 router.get('/get-categoryProduct', getCategoryProduct);
-router.get('/get-productsByCategory', getProductsByCategory);
+router.post('/get-productsByCategory', getProductsByCategory);
+router.post("/get-productDetails",getProductDetails);
 
 module.exports = router;

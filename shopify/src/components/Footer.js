@@ -3,7 +3,7 @@ import logo from "../assest/logo.png";
 
 function Footer() {
   return (
-    <footer className="fixed bottom-0 w-full bg-gray-900">
+    <footer className="relative bottom-0 w-full bg-gray-900">
       <div className="container mx-auto p-2">
         <div className="flex items-center justify-center flex-col lg:space-y-0 space-y-8 lg:justify-between lg:flex-row">
           <a href="/" className="flex justify-center ">

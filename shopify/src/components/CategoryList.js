@@ -8,7 +8,7 @@ const CategoryList = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const getCategoryProduct = async (req, res) => {
+  const getCategoryProduct = async (req,res) => {
     try {
       setLoading(true);
       const res = await fetch(apiUrl.categoryProduct.url);
@@ -58,9 +58,11 @@ const CategoryList = () => {
                     className="object-fill h-full hover:scale-125 transition-all"
                   />
                 </div>
+                <div>
                 <p className="text-center text-sm md:text-base capitalize">
                   {category?.category}
                 </p>
+                </div>
               </Link>
             );
           })
