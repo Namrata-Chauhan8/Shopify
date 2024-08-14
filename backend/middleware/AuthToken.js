@@ -6,7 +6,7 @@ const AuthToken = async (req, res, next) => {
 
     if (!token) {
       return res.json({
-        message: "Token is missing",
+        message: "Please Login...",
         error: true,
         success: false,
       });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import logo from "../assest/logo.png";
 import { IoIosSearch } from "react-icons/io";
 import { FaUserCircle } from "react-icons/fa";
@@ -10,14 +10,17 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { setUserDetails } from "../redux/userSlice";
 import ROLE from "../common/Role";
+import Context from "../context";
 
 const Navbar = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [menuDisplay, setMenuDisplay] = useState(false);
 
+  const { cartCount } = useContext(Context);
+
   const user = useSelector((state) => state?.user?.user);
+  console.log('user: ', user);
 
   const handleLogout = async () => {
     try {
@@ -33,7 +36,6 @@ const Navbar = () => {
       if (data.success) {
         toast.success(data.message);
         dispatch(setUserDetails(null));
-        navigate("/login");
       }
     } catch (error) {
       toast.error(error.message);
@@ -97,14 +99,17 @@ const Navbar = () => {
               </div>
             )}
           </div>
-          <div className="text-3xl cursor-pointer relative">
-            <span>
-              <FaShoppingCart />
-            </span>
-            <div className="bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center absolute -top-2 -right-2">
-              <p className="text-xs">0</p>
-            </div>
-          </div>
+          {user?._id && (
+            <Link to={"/cart"} className="text-3xl cursor-pointer relative">
+              <span>
+                <FaShoppingCart />
+              </span>
+              <div className="bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center absolute -top-2 -right-2">
+                <p className="text-xs">{cartCount}</p>
+              </div>
+            </Link>
+          )}
+
           <div>
             {user?._id ? (
               <button

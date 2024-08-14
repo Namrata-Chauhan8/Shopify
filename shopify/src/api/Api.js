@@ -48,6 +48,22 @@ const apiUrl = {
   productDetails:{
     url: `${backendDomain}/api/get-productDetails`,
     method: "post",
-  }
+  },
+  addToCart:{
+    url: `${backendDomain}/api/add-to-cart`,
+    method: "post",
+  },
+  cartCount:{
+    url: `${backendDomain}/api/get-cart-count`,
+    method: "get",
+  },
+  addToCartProductView:{
+    url: `${backendDomain}/api/view-card-product`,
+    method: "get",
+  },
+  updateCart:{
+    url: `${backendDomain}/api/update-addToCart`,
+    method: "post",
+  },
 };
 export default apiUrl

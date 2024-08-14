@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import { Toaster } from "react-hot-toast";
-import { useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { useEffect, useState } from "react";
 import apiUrl from "./api/Api";
 import Context from "./context";
 import { setUserDetails } from "./redux/userSlice";
@@ -10,6 +10,8 @@ import { useDispatch } from "react-redux";
 
 function App() {
   const dispatch = useDispatch();
+
+  const [cartCount, setCartCount] = useState(0);
   const fetchUserDetails = async () => {
     try {
       const dataResponse = await fetch(apiUrl.current_user.url, {
@@ -27,8 +29,29 @@ function App() {
     }
   };
 
+  const fetchUserAddToCart = async () => {
+    try {
+      const res = await fetch(apiUrl.cartCount.url, {
+        method: apiUrl.cartCount.method,
+        credentials: "include",
+        headers: {
+          "content-type": "application/json",
+        },
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setCartCount(data?.data);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   useEffect(() => {
     fetchUserDetails();
+    fetchUserAddToCart();
   }, []);
 
   return (
@@ -36,6 +59,8 @@ function App() {
       <Context.Provider
         value={{
           fetchUserDetails,
+          cartCount,
+          fetchUserAddToCart,
         }}
       >
         <Toaster />

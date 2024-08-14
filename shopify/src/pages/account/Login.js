@@ -10,7 +10,9 @@ import Context from "../../context";
 
 const Login = () => {
   const navigate = useNavigate();
+
   const fetchUserDetails = useContext(Context);
+
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({
     email: "",
@@ -28,26 +30,31 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    try {
+      e.preventDefault();
 
-    const dataResponse = await fetch(apiUrl.login.url, {
-      method: apiUrl.login.method,
-      credentials: "include",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+      const dataResponse = await fetch(apiUrl.login.url, {
+        method: apiUrl.login.method,
+        credentials: "include",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    const dataApi = await dataResponse.json();
+      const dataApi = await dataResponse.json();
 
-    if (dataApi.success) {
-      toast.success(dataApi.message);
-      navigate("/");
-    }
+      if (dataApi.success) {
+        navigate("/");
+        toast.success(dataApi.message);
+        fetchUserDetails();
+      }
 
-    if (dataApi.error) {
-      toast.error(dataApi.message);
+      if (dataApi.error) {
+        toast.error(dataApi.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
     }
   };
 
