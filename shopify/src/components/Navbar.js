@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import logo from "../assest/logo.png";
-import { IoIosSearch } from "react-icons/io";
+// import { IoIosSearch } from "react-icons/io";
 import { FaUserCircle } from "react-icons/fa";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -14,13 +14,13 @@ import Context from "../context";
 
 const Navbar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [menuDisplay, setMenuDisplay] = useState(false);
 
   const { cartCount } = useContext(Context);
 
   const user = useSelector((state) => state?.user?.user);
-  console.log('user: ', user);
 
   const handleLogout = async () => {
     try {
@@ -42,6 +42,15 @@ const Navbar = () => {
     }
   };
 
+  const handleSearch = async (e) => {
+    const { value } = e.target;
+    if (value) {
+      navigate(`/search?query=${value}`);
+    } else {
+      navigate("/search");
+    }
+  };
+
   return (
     <header className="h-17 shadow-md bg-white">
       <div className="h-full container mx-auto flex items-center px-4 justify-between">
@@ -50,15 +59,16 @@ const Navbar = () => {
             <img src={logo} alt="logo" width={90} height={50} />
           </Link>
         </div>
-        <div className="hidden lg:flex items-center w-full justify-between max-w-sm border rounded-full focus-within:shadow-md">
+        <div className="flex lg:flex items-center w-full justify-between max-w-sm border rounded-full focus-within:shadow-md">
           <input
             type="text"
             placeholder="Search Products..."
-            className="w-full h-9 px-5 border border-gray-300 rounded-l-full"
+            className="lg: w-full h-9 px-5 border border-gray-300 rounded-full"
+            onChange={handleSearch}
           />
-          <div className="text-lg min-w-[50px] h-9 bg-blue-600 flex items-center justify-center rounded-r-full text-white">
+          {/* <div className="hidden lg:flex text-lg min-w-[50px] h-9 bg-blue-600 flex items-center justify-center rounded-r-full text-white">
             <IoIosSearch />
-          </div>
+          </div> */}
         </div>
         <div className="flex items-center gap-7">
           <div className="relative group">

@@ -17,7 +17,7 @@ const apiUrl = {
     url: `${backendDomain}/api/logout`,
     method: "get",
   },
-  allUsers : {
+  allUsers: {
     url: `${backendDomain}/api/allUsers`,
     method: "get",
   },
@@ -29,41 +29,57 @@ const apiUrl = {
     url: `${backendDomain}/api/upload-product`,
     method: "post",
   },
-  allProducts:{
+  allProducts: {
     url: `${backendDomain}/api/get-product`,
     method: "get",
   },
-  editProduct:{
+  editProduct: {
     url: `${backendDomain}/api/update-product`,
     method: "post",
   },
-  categoryProduct:{
+  categoryProduct: {
     url: `${backendDomain}/api/get-categoryProduct`,
     method: "get",
   },
-  productsByCategory:{
+  productsByCategory: {
     url: `${backendDomain}/api/get-productsByCategory`,
     method: "post",
   },
-  productDetails:{
+  productDetails: {
     url: `${backendDomain}/api/get-productDetails`,
     method: "post",
   },
-  addToCart:{
+  addToCart: {
     url: `${backendDomain}/api/add-to-cart`,
     method: "post",
   },
-  cartCount:{
+  cartCount: {
     url: `${backendDomain}/api/get-cart-count`,
     method: "get",
   },
-  addToCartProductView:{
+  addToCartProductView: {
     url: `${backendDomain}/api/view-card-product`,
     method: "get",
   },
-  updateCart:{
+  updateCart: {
     url: `${backendDomain}/api/update-addToCart`,
     method: "post",
   },
+  deleteProduct: {
+    url: `${backendDomain}/api/delete-product`,
+    method: "delete",
+  },
+  searchProduct: {
+    url: `${backendDomain}/api/search`,
+    method: "get",
+  },
+  filterProduct: {
+    url: `${backendDomain}/api/filter`,
+    method: "post",
+  },
+  deleteAdminProduct: {
+    url: `${backendDomain}/api/delete-admin-product`,
+    method: "delete",
+  },
 };
-export default apiUrl
+export default apiUrl;

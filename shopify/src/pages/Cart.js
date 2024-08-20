@@ -4,9 +4,11 @@ import toast from "react-hot-toast";
 import Context from "../context";
 import displayINRCurrency from "../helpers/displayCurrency";
 import { AiFillDelete } from "react-icons/ai";
+import { loadStripe } from "@stripe/stripe-js";
 
 const Cart = () => {
   const [data, setData] = useState([]);
+
   const context = useContext(Context);
 
   const fetchCartProducts = async () => {
@@ -30,24 +32,84 @@ const Cart = () => {
   };
 
   const increaseQty = async (id, qty) => {
-    // updateCartProduct(id, qty + 1);
-  };
+    try {
+      const res = await fetch(apiUrl.updateCart.url, {
+        method: apiUrl.updateCart.method,
+        credentials: "include",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          _id: id,
+          quantity: qty + 1,
+        }),
+      });
 
-  const decreaseQty = async (id, qty) => {
-    if (qty > 1) {
-      // updateCartProduct(id, qty - 1);
+      const data = await res.json();
+      if (data.success) {
+        fetchCartProducts();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(data.message);
     }
   };
 
-  const totalQty = data.reduce(
-    (previousValue, currentValue) =>
-      previousValue + currentValue.productQuantity,
-    0
-  );
-  const totalPrice = data.reduce(
-    (prev, curr) => prev + curr.productQuantity * curr?.productId?.price,
-    0
-  );
+  const decreaseQty = async (id, qty) => {
+    try {
+      if (qty >= 2) {
+        const res = await fetch(apiUrl.updateCart.url, {
+          method: apiUrl.updateCart.method,
+          credentials: "include",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            _id: id,
+            quantity: qty - 1,
+          }),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          fetchCartProducts();
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      toast.error(data.message);
+    }
+  };
+
+  const deleteProduct = async (id) => {
+    try {
+      const res = await fetch(apiUrl.deleteProduct.url, {
+        method: apiUrl.deleteProduct.method,
+        credentials: "include",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          productId: id,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchCartProducts();
+        context.fetchUserAddToCart();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(data.message);
+    }
+  };
+
+  const totalPrice = data.reduce((acc, curr) => {
+    return acc + curr.productId.price * curr.quantity;
+  }, 0);
 
   useEffect(() => {
     fetchCartProducts();
@@ -64,9 +126,9 @@ const Cart = () => {
         </div>
         <div className="flex flex-col lg:flex-row gap-10 lg:justify-between p-4">
           <div className="w-full max-w-3xl">
-            {data.map((product) => (
+            {data.map((product, index) => (
               <div
-                key={product._id}
+                key={product._id + "add to cart loading"}
                 className="w-full bg-white h-32 my-2 border border-slate-300 rounded grid grid-cols-[128px,1fr]"
               >
                 <div className="w-32 h-32 bg-slate-200">
@@ -78,13 +140,8 @@ const Cart = () => {
                 </div>
                 <div className="p-2 relative flex flex-wrap flex-col">
                   <div
-                    className="absolute right-0 rounded-md p-2 hover:text-white cursor-pointer mr-auto"
-                    style={{
-                      border: "1px solid rgb(56, 45, 94)",
-                      backgroundColor: "rgb(56, 45, 94)",
-                      color: "rgb(239,224,226)",
-                    }}
-                    // onClick={()=> handleDeleteCartProduct(product?._id)}
+                    className="absolute right-0 rounded-md p-2 hover:text-white cursor-pointer bg-red-500 mr-2"
+                    onClick={() => deleteProduct(product?._id)}
                   >
                     <AiFillDelete />
                   </div>
@@ -100,7 +157,7 @@ const Cart = () => {
                     </p>
                     <p className="text-slate-600 font-semibold text-md">
                       {displayINRCurrency(
-                        product?.productId?.price * product?.productQuantity
+                        product?.productId?.price * product?.quantity
                       )}
                     </p>
                   </div>
@@ -108,7 +165,7 @@ const Cart = () => {
                     <button
                       className="border border-blue-600 text-blue-600 hover:bg-blue-500 w-6 h-6 flex justify-center items-center rounded"
                       onClick={() =>
-                        decreaseQty(product._id, product.productQuantity)
+                        decreaseQty(product?._id, product?.quantity)
                       }
                     >
                       -
@@ -117,7 +174,7 @@ const Cart = () => {
                     <button
                       className="border border-blue-600 text-blue-600 hover:bg-blue-500 hover:bg-blue-500 w-6 h-6 flex justify-center items-center rounded"
                       onClick={() =>
-                        increaseQty(product._id, product.productQuantity)
+                        increaseQty(product?._id, product?.quantity)
                       }
                     >
                       +
@@ -127,29 +184,50 @@ const Cart = () => {
               </div>
             ))}
           </div>
-          <div className="mt-5 lg:mt-0 w-full max-w-sm">
-            <div
-              className="h-36 bg-white rounded-md"
-              style={{
-                color: "rgb(56, 45, 94)",
-                backgroundColor: "rgb(239,224,226)",
-              }}
-            >
+          <div className="mt-5 lg:mt-0 w-full max-w-sm ">
+            <div className="h-auto rounded-md bg-white text-black border border-black shadow-md">
               <h1 className="px-4 py-1 font-semibold text-lg justify-center items-center text-center">
                 Bill Details
               </h1>
-              <div className="flex items-center justify-between px-4 gap-2 font-medium text-md text-slate-600">
-                <p>Quantity</p>
-                <p>{totalQty}</p>
+              <table className="w-full h-auto ">
+                <thead>
+                  <tr className="flex justify-around text-black m-1 border border-slate-400 rounded-lg">
+                    <th>Items</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.map((product, index) => (
+                    <tr
+                      key={product._id}
+                      className="flex justify-around text-gray-600 ml-1 mr-1"
+                    >
+                      <td className="line-clamp-1">
+                        {product?.productId?.productName}
+                      </td>
+                      <td>x {product?.quantity}</td>
+                      <td>
+                        {displayINRCurrency(
+                          product?.productId?.price * product?.quantity
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              <div className="flex justify-between border border-slate-400 rounded-lg m-1 p-1">
+                <p className="ml-1 mr-1 font-semibold">Total Price </p>
+                <p className="ml-1 mr-1 font-semibold text-blue-700">
+                  {displayINRCurrency(totalPrice)}
+                </p>
               </div>
-              <div className="flex items-center justify-between px-4 gap-1 font-medium text-md text-slate-600">
-                <p>Total Price</p>
-                <p>{displayINRCurrency(totalPrice)}</p>
-              </div>
+
               <div className="flex justify-center items-center mt-2">
                 <button
-                  className="p-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 w-full"
-                  style={{ backgroundColor: "rgb(56, 45, 94)" }}
+                  className="p-2 bg-gray-500 text-white rounded-md hover:bg-blue-600 w-full m-2"
+                  disabled={data.length === 0}
                   //   onClick={Pay}
                 >
                   Buy Now

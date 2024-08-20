@@ -51,10 +51,10 @@ const Login = () => {
       }
 
       if (dataApi.error) {
-        toast.error(dataApi.message);
+        console.error(dataApi.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      console.error(error.message);
     }
   };
 

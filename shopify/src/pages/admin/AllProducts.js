@@ -26,7 +26,8 @@ const AllProducts = () => {
   return (
     <div>
       <div className="bg-white py-2 px-4 flex justify-between items-center">
-        <h2 className="font-bold text-lg px-2 py-3">All Products</h2>
+        <h2 className="font-bold text-sm px-2 py-3">All Products</h2>
+
         <button
           className="text-2xl px-2 py-2 hover:bg-slate-100"
           onClick={() => setOpenUploadModal(true)}
@@ -37,15 +38,22 @@ const AllProducts = () => {
 
       {/*All products */}
       <div className="flex items-center flex-wrap gap-5 py-4 h-[calc(100vh-190px)] overflow-y-scroll">
-        {allProducts?.map((product,index)=>{
+        {allProducts?.map((product, index) => {
           return (
-            <AdminProductCard data={product} key={index+"allProduct"} fetchData={fetchAllProducts}/>
-          )
+            <AdminProductCard
+              data={product}
+              key={index + "allProduct"}
+              fetchData={fetchAllProducts}
+            />
+          );
         })}
       </div>
 
       {openUploadModal && (
-        <UploadProducts onClose={() => setOpenUploadModal(false)} fetchData={fetchAllProducts}/>
+        <UploadProducts
+          onClose={() => setOpenUploadModal(false)}
+          fetchData={fetchAllProducts}
+        />
       )}
     </div>
   );
