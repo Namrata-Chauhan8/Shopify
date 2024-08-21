@@ -4,9 +4,11 @@ import toast from "react-hot-toast";
 import moment from "moment";
 import { FaEdit } from "react-icons/fa";
 import ChangeUserRole from "../../components/ChangeUserRole";
+import { ADMIN } from "../../constants/Constant";
 
 const AllUsers = () => {
   const [allUsers, setAllUsers] = useState([]);
+
   const [openUpdateRole, setOpenUpdateRole] = useState(false);
   const [updateUserDetails, setUpdateUserDetails] = useState({
     name: "",
@@ -60,20 +62,22 @@ const AllUsers = () => {
               <td>{user.role}</td>
               <td>{formatDate(user.createdAt)}</td>
               <td>
-                <button
-                  className="bg-green-100 p-2 rounded-full cursor-pointer  hover:bg-green-500"
-                  onClick={() => {
-                    setUpdateUserDetails({
-                      name: user.username,
-                      email: user.email,
-                      role: user.role,
-                      _id: user._id,
-                    });
-                    setOpenUpdateRole(true);
-                  }}
-                >
-                  <FaEdit />
-                </button>
+                {user._id !== ADMIN && (
+                  <button
+                    className="bg-green-100 p-2 rounded-full cursor-pointer  hover:bg-green-500"
+                    onClick={() => {
+                      setUpdateUserDetails({
+                        name: user.username,
+                        email: user.email,
+                        role: user.role,
+                        _id: user._id,
+                      });
+                      setOpenUpdateRole(true);
+                    }}
+                  >
+                    <FaEdit />
+                  </button>
+                )}
               </td>
             </tr>
           ))}

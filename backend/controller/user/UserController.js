@@ -47,7 +47,6 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    
 
     if (!email) {
       throw new Error("Please provide email");
@@ -85,7 +84,11 @@ const login = async (req, res) => {
         error: false,
       });
     } else {
-      throw new Error("Please check Password");
+      return res.status(401).json({
+        message: "Invalid credentials",
+        error: true,
+        success: false,
+      });
     }
   } catch (err) {
     res.json({
@@ -100,7 +103,7 @@ const logout = async (req, res) => {
   try {
     res.cookie("token", "", {
       httpOnly: true,
-      expires: new Date(0), 
+      expires: new Date(0),
     });
 
     res.status(200).json({
@@ -116,6 +119,6 @@ const logout = async (req, res) => {
       message: error.message,
     });
   }
-}
+};
 
-module.exports = { signup: signup, login: login ,logout:logout};
+module.exports = { signup: signup, login: login, logout: logout };

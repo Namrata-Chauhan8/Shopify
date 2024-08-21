@@ -38,10 +38,6 @@ const router = createBrowserRouter([
         element: <SearchProduct />,
       },
       {
-        path: "forgot-password",
-        element: <div>Forgot Password</div>,
-      },
-      {
         path: "adminPanel",
         element: (
           <div>

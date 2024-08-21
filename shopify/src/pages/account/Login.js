@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import LoginImg from "../../assest/bro.png";
 import logo from "../../assest/logo.png";
@@ -6,33 +6,21 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import apiUrl from "../../api/Api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import Context from "../../context";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const navigate = useNavigate();
 
-  const fetchUserDetails = useContext(Context);
+  // const fetchUserDetails = useContext(Context);
 
   const [showPassword, setShowPassword] = useState(false);
-  const [data, setData] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setData((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
-  };
-
-  const handleSubmit = async (e) => {
+  const handleFormSubmit = async (data) => {
     try {
-      e.preventDefault();
-
       const dataResponse = await fetch(apiUrl.login.url, {
         method: apiUrl.login.method,
         credentials: "include",
@@ -47,14 +35,12 @@ const Login = () => {
       if (dataApi.success) {
         navigate("/");
         toast.success(dataApi.message);
-        fetchUserDetails();
-      }
-
-      if (dataApi.error) {
-        console.error(dataApi.message);
+        // fetchUserDetails();
+      } else {
+        toast.error(dataApi.message);
       }
     } catch (error) {
-      console.error(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -120,16 +106,21 @@ const Login = () => {
                 </div>
               </div>
 
-              <form className="mx-auto max-w-xs" onSubmit={handleSubmit}>
+              <form
+                className="mx-auto max-w-xs"
+                onSubmit={handleSubmit(handleFormSubmit)}
+              >
                 <input
                   className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                   type="email"
                   placeholder="Email"
                   name="email"
-                  value={data.email}
-                  onChange={handleChange}
-                  required
+                  {...register("email", { required: true })}
                 />
+
+                {errors.email && (
+                  <p className="text-red-500">Email is required</p>
+                )}
 
                 <div className="relative mt-5">
                   <input
@@ -137,10 +128,11 @@ const Login = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
                     name="password"
-                    value={data.password}
-                    onChange={handleChange}
-                    required
+                    {...register("password", { required: true })}
                   />
+                  {errors.password && (
+                    <p className="text-red-500">Password is required</p>
+                  )}
                   <div
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
@@ -152,7 +144,6 @@ const Login = () => {
                 <div className="flex items-center justify-between mt-5">
                   <p>
                     <Link
-                      to="/forgot-password"
                       className="text-xs text-blue-600 hover:underline"
                     >
                       Forgot your password?

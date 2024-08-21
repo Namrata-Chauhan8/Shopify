@@ -81,5 +81,9 @@ const apiUrl = {
     url: `${backendDomain}/api/delete-admin-product`,
     method: "delete",
   },
+  checkout: {
+    url: `${backendDomain}/api/checkout`,
+    method: "post",
+  },
 };
 export default apiUrl;

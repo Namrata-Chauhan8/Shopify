@@ -6,58 +6,38 @@ import { MdAddAPhoto } from "react-icons/md";
 import imageToBase64 from "../../helpers/imageToBase64";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import apiUrl from "../../api/Api";
-
 
 const Signup = () => {
   const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setConfirmPassword] = useState(false);
-  const [data, setData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    profilePhoto: "",
-  });
+  const [profilePhoto, setProfilePhoto] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setData((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleFormSubmit = async (data) => {
     try {
-     
-      if(data.password === data.confirmPassword){
+      const dataResponse = await fetch(apiUrl.signUp.url, {
+        method: apiUrl.signUp.method,
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ ...data, profilePhoto }),
+      });
 
-        const dataResponse = await fetch(apiUrl.signUp.url,{
-            method : apiUrl.signUp.method,
-            headers : {
-                "content-type" : "application/json"
-            },
-            body : JSON.stringify(data)
-          })
-    
-          const dataApi = await dataResponse.json()
+      const dataApi = await dataResponse.json();
 
-          if(dataApi.success){
-            toast.success(dataApi.message)
-            navigate("/login")
-          }
-
-          if(dataApi.error){
-            toast.error(dataApi.message)
-          }
-    
-      }else{
-        toast.error("Please check password and confirm password")
+      if (dataApi.success) {
+        toast.success(dataApi.message);
+        navigate("/login");
+      } else if (dataApi.error) {
+        toast.error(dataApi.message);
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);
@@ -67,13 +47,9 @@ const Signup = () => {
   const handleProfilePicture = async (e) => {
     const file = e.target.files[0];
     const picture = await imageToBase64(file);
-    setData((prev) => {
-      return {
-        ...prev,
-        profilePhoto: picture,
-      };
-    });
+    setProfilePhoto(picture);
   };
+
   return (
     <section className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
       <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
@@ -83,7 +59,10 @@ const Signup = () => {
           </div>
           <div className="mt-12 flex flex-col items-center">
             <h1 className="text-2xl xl:text-3xl font-extrabold">Sign up</h1>
-            <form className="w-full flex-1 mt-8" onSubmit={handleSubmit}>
+            <form
+              className="w-full flex-1 mt-8"
+              onSubmit={handleSubmit(handleFormSubmit)}
+            >
               <label>
                 <input
                   type="file"
@@ -92,9 +71,9 @@ const Signup = () => {
                 />
                 <div className="mx-auto max-w-xs flex cursor-pointer ">
                   <div className="mb-5 text-2xl">
-                    {data.profilePhoto ? (
+                    {profilePhoto ? (
                       <img
-                        src={data.profilePhoto}
+                        src={profilePhoto}
                         alt="profile"
                         className="w-20 rounded-full h-20"
                       />
@@ -112,29 +91,34 @@ const Signup = () => {
                   type="text"
                   placeholder="Username"
                   name="username"
-                  onChange={handleChange}
-                  value={data.username}
-                  required
+                  {...register("username", { required: true })}
                 />
+                {errors.username && (
+                  <p className="text-red-500">Username is required</p>
+                )}
+
                 <input
                   className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                   type="email"
                   placeholder="Email"
                   name="email"
-                  onChange={handleChange}
-                  value={data.email}
-                  required
+                  {...register("email", { required: true })}
                 />
+                {errors.email && (
+                  <p className="text-red-500">Email is required</p>
+                )}
+
                 <div className="relative mt-5">
                   <input
                     className="w-full px-8 py-4 pr-12 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
                     name="password"
-                    onChange={handleChange}
-                    value={data.password}
-                    required
+                    {...register("password", { required: true })}
                   />
+                  {errors.password && (
+                    <p className="text-red-500">Password is required</p>
+                  )}
                   <div
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
@@ -142,16 +126,26 @@ const Signup = () => {
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </div>
                 </div>
+
                 <div className="relative mt-5">
                   <input
                     className="w-full px-8 py-4 pr-12 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm Password"
                     name="confirmPassword"
-                    onChange={handleChange}
-                    value={data.confirmPassword}
-                    required
+                    {...register("confirmPassword", {
+                      required: true,
+                      validate: (value) =>
+                        value === watch("password") ||
+                        "The passwords do not match",
+                    })}
                   />
+                  {errors.confirmPassword && (
+                    <p className="text-red-500">
+                      {errors.confirmPassword.message ||
+                        "Confirm Password is required"}
+                    </p>
+                  )}
                   <div
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 cursor-pointer"
                     onClick={() => setConfirmPassword(!showConfirmPassword)}
@@ -159,6 +153,7 @@ const Signup = () => {
                     {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                   </div>
                 </div>
+
                 <button className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
                   <svg
                     className="w-6 h-6 -ml-2"
@@ -174,6 +169,7 @@ const Signup = () => {
                   </svg>
                   <span className="ml-3">Sign Up</span>
                 </button>
+
                 <p className="mt-6 text-xs text-gray-600 text-center">
                   Already a member?
                   <Link

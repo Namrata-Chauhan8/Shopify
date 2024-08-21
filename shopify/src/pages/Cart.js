@@ -5,6 +5,7 @@ import Context from "../context";
 import displayINRCurrency from "../helpers/displayCurrency";
 import { AiFillDelete } from "react-icons/ai";
 import { loadStripe } from "@stripe/stripe-js";
+import { PUBLISH_KEY } from "../constants/Constant";
 
 const Cart = () => {
   const [data, setData] = useState([]);
@@ -114,6 +115,37 @@ const Cart = () => {
   useEffect(() => {
     fetchCartProducts();
   }, []);
+
+  const handlePayment = async () => {
+    try {
+      const stripe = await loadStripe(PUBLISH_KEY);
+  
+      const res = await fetch(apiUrl.checkout.url, {
+        method: apiUrl.checkout.method,
+        credentials: "include",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          products: data,
+        }),
+      });
+      const session = await res.json();
+  
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+  
+      if (result.error) {
+        toast.error(result.error.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }finally{
+      
+    }
+  };
+  
   return (
     <div className="p-5">
       <div className="container mx-auto">
@@ -228,7 +260,7 @@ const Cart = () => {
                 <button
                   className="p-2 bg-gray-500 text-white rounded-md hover:bg-blue-600 w-full m-2"
                   disabled={data.length === 0}
-                  //   onClick={Pay}
+                  onClick={handlePayment}
                 >
                   Buy Now
                 </button>
