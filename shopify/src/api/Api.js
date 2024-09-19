@@ -1,4 +1,4 @@
-const backendDomain = "http://localhost:8080";
+const backendDomain = "shopify-99y6j1sck-namrata-chauhan8s-projects.vercel.app";
 
 const apiUrl = {
   signUp: {
